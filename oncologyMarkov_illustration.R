@@ -22,7 +22,7 @@
 #
 # The script is heavily based on a script that has been developed by the Decision Analysis in R for Technologies in 
 # Health (DARTH) workgroup. Please see the README.md file for details on the DARTH workgroup and their work, and
-# please make sure to appropriately reference their publications when using their scripts.
+# make sure to appropriately reference their publications when using their scripts.
 
 
 
