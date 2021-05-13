@@ -20,13 +20,13 @@
 # 3. SENSITIVITY ANALYSIS       defining and performing deterministic sensitivity analyses
 # 4. PROBABILISTIC ANALYSIS     defining and performing a probabilistic analysis of the model
 #
-# The script is heavily based on a script that has been developed by the Decision Analysis in R for Technologies in 
+# The script is heavily based on a script that has been developed by the Decision Analysis in R for Technologies in
 # Health (DARTH) workgroup, which consists of:
-# - Fernando Alarid-Escudero, PhD (1) 
-# - Eva A. Enns, MS, PhD (2)	
+# - Fernando Alarid-Escudero, PhD (1)
+# - Eva A. Enns, MS, PhD (2)
 # - M.G. Myriam Hunink, MD, PhD (3,4)
-# - Hawre J. Jalal, MD, PhD (5) 
-# - Eline M. Krijkamp, MSc (3)	
+# - Hawre J. Jalal, MD, PhD (5)
+# - Eline M. Krijkamp, MSc (3)
 # - Petros Pechlivanoglou, PhD (6,7)
 # - Alan Yang, MSc (7)
 # 
@@ -41,13 +41,13 @@
 # Please cite the applicable DARTH publications when using any of their code:
 # - Jalal H, Pechlivanoglou P, Krijkamp E, Alarid-Escudero F, Enns E, Hunink MG. An Overview of R in Health Decision
 #   Sciences. Med Decis Making. 2017; 37(3): 735-746. https://journals.sagepub.com/doi/abs/10.1177/0272989X16686559
-# - Alarid-Escudero F, Krijkamp EM, Enns EA, Yang A, Hunink MGM Pechlivanoglou P, Jalal H. Cohort State-Transition 
+# - Alarid-Escudero F, Krijkamp EM, Enns EA, Yang A, Hunink MGM Pechlivanoglou P, Jalal H. Cohort State-Transition
 #   Models in R: A Tutorial. arXiv:200107824v2. 2020:1-48. http://arxiv.org/abs/2001.07824
-# - Krijkamp EM, Alarid-Escudero F, Enns EA, Jalal HJ, Hunink MGM, Pechlivanoglou P. Microsimulation modeling for 
-#   health decision sciences using R: A tutorial. Med Decis Making. 2018;38(3):400–22. 
+# - Krijkamp EM, Alarid-Escudero F, Enns EA, Jalal HJ, Hunink MGM, Pechlivanoglou P. Microsimulation modeling for
+#   health decision sciences using R: A tutorial. Med Decis Making. 2018;38(3):400–22.
 #   https://journals.sagepub.com/doi/abs/10.1177/0272989X18754513
-# - Krijkamp EM, Alarid-Escudero F, Enns E, Pechlivanoglou P, Hunink MM, Jalal H. A Multidimensional Array 
-#   Representation of State-Transition Model Dynamics. Med Decis Making. 2020 Feb;40(2):242-248. 
+# - Krijkamp EM, Alarid-Escudero F, Enns E, Pechlivanoglou P, Hunink MM, Jalal H. A Multidimensional Array
+#   Representation of State-Transition Model Dynamics. Med Decis Making. 2020 Feb;40(2):242-248.
 #   https://journals.sagepub.com/doi/10.1177/0272989X19893973
 
 
