@@ -292,7 +292,7 @@ OWSA_NMB  <- run_owsa_det(
 owsa_tornado(owsa = OWSA_NMB, txtsize = 11)
 
 
-## 3.2 Defining and performing a two-way sensitivity analysis ----
+## 3.3 Defining and performing a two-way sensitivity analysis ----
 
 # To perform a two-way sensitivity analysis (TWSA), a similar data.frame with model parameters is required
 df_params_TWSA <- df_params_OWSA
