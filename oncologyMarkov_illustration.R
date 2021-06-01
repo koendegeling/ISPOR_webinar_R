@@ -80,13 +80,15 @@ u_D       <- 0      # utility when dead
 ## 2.2 Markov cohort trace matrix ----
 
 # Initialize matrices to store the Markov cohort traces for each strategy
-# - note that the number of rows is n_cycle + 1, because R doesn't use index 0 (i.e. cycle 0)
 m_M_SoC <- m_M_Exp <-  matrix(
   data = NA, 
-  nrow = n_cycle + 1 ,  
+  nrow = n_cycle,  
   ncol = n_states, 
-  dimnames = list(0:n_cycle, v_names_states)
+  dimnames = list(paste('Cycle', 1:n_cycle), v_names_states)
 )
+
+# View initialized Markov cohort trace matrix
+#View(m_M_SoC)
 
 # Specifying the initial state for the cohorts (all patients start in ProgressionFree)
 m_M_SoC[1, "ProgressionFree"] <- m_M_Exp[1, "ProgressionFree"] <- 1
@@ -102,12 +104,12 @@ head(m_M_Exp)
 
 # Initialize matrices or the transition probabilities
 # - starting with standard of care
-m_P_SoC <- matrix(
+(m_P_SoC <- matrix(
   data = 0,
   nrow = n_states, 
   ncol = n_states,
   dimnames = list(v_names_states, v_names_states)
-)
+))
 
 # Setting the transition probabilities from ProgressionFree based on the model parameters
 m_P_SoC["ProgressionFree", "ProgressionFree"] <- (1 - p_FD) * (1 - p_FP_SoC)
@@ -121,11 +123,17 @@ m_P_SoC["Progression", "Dead"]        <- p_PD
 # From Dead
 m_P_SoC["Dead", "Dead"] <- 1
 
+# Inspect transition matrix for SoC
+m_P_SoC
+
 # Using the transition probabilities for standard of care as basis, update the transition probabilities that are
 # different for the experimental strategy
 m_P_Exp <- m_P_SoC
 m_P_Exp["ProgressionFree", "ProgressionFree"] <- (1 - p_FD) * (1 - p_FP_Exp)
 m_P_Exp["ProgressionFree", "Progression"]     <- (1 - p_FD) * p_FP_Exp
+
+# Inspect transition matrix for Exp
+m_P_Exp
 
 # Check that transition probabilities are in [0, 1] using a function from the 'dampack' package
 check_transition_probability(m_P_SoC, verbose = TRUE)
@@ -135,19 +143,18 @@ check_transition_probability(m_P_Exp, verbose = TRUE)
 check_sum_of_transition_array(m_P_SoC, n_states = n_states, n_cycles = n_cycle, verbose = TRUE)
 check_sum_of_transition_array(m_P_Exp, n_states = n_states, n_cycles = n_cycle, verbose = TRUE)
 
-# Inspect whether properly defined
-m_P_SoC
-m_P_Exp 
-
 
 ## 2.4 Model evaluation ----
 
 # Create the Markov cohort trace by looping over all cycles
 # - note that the trace can easily be obtained using matrix multiplications
-for(i_cycle in 1:n_cycle) {
+for(i_cycle in 1:(n_cycle-1)) {
   m_M_SoC[i_cycle + 1, ] <- m_M_SoC[i_cycle, ] %*% m_P_SoC
   m_M_Exp[i_cycle + 1, ] <- m_M_Exp[i_cycle, ] %*% m_P_Exp
 }
+
+# View filled Markov cohort trace matrix
+#View(m_M_SoC)
 
 # Plotting the Markov cohort traces
 matplot(m_M_SoC, 
@@ -163,13 +170,13 @@ matplot(m_M_Exp,
         lty  = 3,
         add  = TRUE)
 legend("right", 
-       legend = c(paste(v_names_states, "(SOC)"), paste(v_names_states, "(Exp)")), 
+       legend = c(paste(v_names_states, "(SoC)"), paste(v_names_states, "(Exp)")), 
        col    = rep(c("black", "red", "green"), 2), 
        lty    = c(1, 1, 1, 3, 3, 3), 
        lwd    = 3,
        bty    = "n")
 
-# Calculating and plotting overal survival (OS)
+# Calculating and plotting overall survival (OS)
 v_OS_SoC <- 1 - m_M_SoC[, "Dead"]
 v_OS_Exp <- 1 - m_M_Exp[, "Dead"]
 
@@ -193,8 +200,8 @@ legend("right",
 ## 2.5 Health economic outcomes ----
 
 # Calculate the costs and QALYs per cycle by multiplying m_M with the cost/utility vectors for the different states
-# - note that to obtain QALYs, the utility needs to be mutiplied by the cycle length as well
-v_tc_SoC <- m_M_SoC %*% c(c_F_SoC, c_P, c_D)
+# - note that to obtain QALYs, the utility needs to be multiplied by the cycle length as well
+(v_tc_SoC <- m_M_SoC %*% c(c_F_SoC, c_P, c_D))
 v_tc_Exp <- m_M_Exp %*% c(c_F_Exp, c_P, c_D)
 
 v_tu_SoC <- m_M_SoC %*% c(u_F, u_P, u_D) * t_cycle
@@ -202,13 +209,13 @@ v_tu_Exp <- m_M_Exp %*% c(u_F, u_P, u_D) * t_cycle
 
 # Obtained the discounted costs and QALYs by multiplying the vectors by the discount rate for each cycle
 # - note first the discount rate for each cycle needs to be defined accounting for the cycle length
-v_dwc <- 1 / ((1 + d_c) ^ ((0:n_cycle) * t_cycle)) 
-v_dwe <- 1 / ((1 + d_e) ^ ((0:n_cycle) * t_cycle))
+(v_dwc <- 1 / ((1 + d_c) ^ ((0:(n_cycle-1)) * t_cycle)))
+v_dwe <- 1 / ((1 + d_e) ^ ((0:(n_cycle-1)) * t_cycle))
 
-tc_d_SoC <-  t(v_tc_SoC) %*% v_dwc 
+(tc_d_SoC <-  t(v_tc_SoC) %*% v_dwc) 
 tc_d_Exp <-  t(v_tc_Exp) %*% v_dwc
 
-tu_d_SoC <-  t(v_tu_SoC) %*% v_dwe
+(tu_d_SoC <-  t(v_tu_SoC) %*% v_dwe)
 tu_d_Exp <-  t(v_tu_Exp) %*% v_dwe
 
 # The discounted costs and QALYs can be summarized and visualized using functions from the 'dampack' package

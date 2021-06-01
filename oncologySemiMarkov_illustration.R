@@ -191,9 +191,9 @@ u_D       <- 0      # utility when dead
 # - note that the number of rows is n_cycle + 1, because R doesn't use index 0 (i.e. cycle 0)
 m_M_SoC <- m_M_Exp <-  matrix(
   data = NA, 
-  nrow = n_cycle + 1 ,  
+  nrow = n_cycle,  
   ncol = n_states, 
-  dimnames = list(0:n_cycle, v_names_states)
+  dimnames = list(paste('Cycle', 1:n_cycle), v_names_states)
 )
 
 # Specifying the initial state for the cohorts (all patients start in ProgressionFree)
@@ -254,7 +254,7 @@ m_P_Exp[ , , 1:2]
 # Create the Markov cohort trace by looping over all cycles
 # - note that the trace can easily be obtained using matrix multiplications
 # - note that now the right probabilities for the cycle need to be selected
-for(i_cycle in 1:n_cycle) {
+for(i_cycle in 1:(n_cycle-1)) {
   m_M_SoC[i_cycle + 1, ] <- m_M_SoC[i_cycle, ] %*% m_P_SoC[ , , i_cycle]
   m_M_Exp[i_cycle + 1, ] <- m_M_Exp[i_cycle, ] %*% m_P_Exp[ , , i_cycle]
 }
@@ -312,8 +312,8 @@ v_tu_Exp <- m_M_Exp %*% c(u_F, u_P, u_D) * t_cycle
 
 # Obtained the discounted costs and QALYs by multiplying the vectors by the discount rate for each cycle
 # - note first the discount rate for each cycle needs to be defined accounting for the cycle length
-v_dwc <- 1 / ((1 + d_c) ^ ((0:n_cycle) * t_cycle)) 
-v_dwe <- 1 / ((1 + d_e) ^ ((0:n_cycle) * t_cycle))
+v_dwc <- 1 / ((1 + d_c) ^ ((0:(n_cycle-1)) * t_cycle)) 
+v_dwe <- 1 / ((1 + d_e) ^ ((0:(n_cycle-1)) * t_cycle))
 
 tc_d_SoC <-  t(v_tc_SoC) %*% v_dwc 
 tc_d_Exp <-  t(v_tc_Exp) %*% v_dwc
