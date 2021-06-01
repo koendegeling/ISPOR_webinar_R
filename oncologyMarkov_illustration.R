@@ -8,7 +8,7 @@
 #
 # This script has been created by Petros Pechlivanougly and Koen Degeling for the ISPOR Student Network Webinar or
 # Health Economic Modelling using R. It demonstrated the implementation on a three-state Markov model using three
-# health states: progression-free (F), progression (P) and dead (D). This model structure is ofter referred to as
+# health states: progression-free (F), progression (P) and dead (D). This model structure is often referred to as
 # the three-state oncology model and is often used to model the cost-effectiveness of advanced cancer treatments.
 # The objective of this hypothetical cost-utility study is to estimate the cost per quality-adjusted life year
 # gained for an experimental treatment strategy (Exp) compared to the standard of care (SoC). The experimental
@@ -55,9 +55,9 @@ n_states       <- length(v_names_states)                        # number of stat
 
 # General modelling parameters
 t_cycle <- 1/4      # cycle length of 3 months (in years)                                   
-n_cycle <- 60       # number of cycles (total runtime 15 years)
+n_cycle <- 60       # number of cycles (total run time 15 years)
 d_e     <- 0.03     # discount rate (per year) for effects
-d_c     <- 0.03     # discounr rate (per year) for costs
+d_c     <- 0.03     # discount rate (per year) for costs
 
 # Transition probabilities
 p_FD      <- 0.02   # probability of dying when progression-free
@@ -80,7 +80,7 @@ u_D       <- 0      # utility when dead
 ## 2.2 Markov cohort trace matrix ----
 
 # Initialize matrices to store the Markov cohort traces for each strategy
-m_M_SoC <- m_M_Exp <-  matrix(
+m_M_SoC <- m_M_Exp <- matrix(
   data = NA, 
   nrow = n_cycle,  
   ncol = n_states, 
@@ -213,10 +213,10 @@ v_tu_Exp <- m_M_Exp %*% c(u_F, u_P, u_D) * t_cycle
 v_dwe <- 1 / ((1 + d_e) ^ ((0:(n_cycle-1)) * t_cycle))
 
 (tc_d_SoC <-  t(v_tc_SoC) %*% v_dwc) 
-tc_d_Exp <-  t(v_tc_Exp) %*% v_dwc
+(tc_d_Exp <-  t(v_tc_Exp) %*% v_dwc)
 
 (tu_d_SoC <-  t(v_tu_SoC) %*% v_dwe)
-tu_d_Exp <-  t(v_tu_Exp) %*% v_dwe
+(tu_d_Exp <-  t(v_tu_Exp) %*% v_dwe)
 
 # The discounted costs and QALYs can be summarized and visualized using functions from the 'dampack' package
 (df_cea <- calculate_icers(cost       = c(tc_d_SoC, tc_d_Exp),
@@ -268,7 +268,7 @@ oncologyMarkov(l_params_all = l_params_all, n_wtp = 20000)
 ## 3.2 Defining and performing a one-way sensitivity analysis ----
 
 # A one-way sensitivity analysis (OWSA) can be defined by specifying the names of the parameters that are to be
-# incuded and their minimum and maximum values
+# included and their minimum and maximum values
 # - here, the cost per cycle of the experimental treatment and utility for the progression-free state are included
 df_params_OWSA <- data.frame(
   pars = c("c_F_Exp", "u_F"),   # names of the parameters to be changed
@@ -361,7 +361,7 @@ head(df_c)
 
 # Evaluate the Markov model for each set (row) of parameter values
 # - note this loop can be run in parallel to decrease the runtime
-for(i_run in 1:n_runs){
+for(i_run in 1:n_runs) {
   
   # Evaluate the model and store the outcomes
   l_out_temp    <- oncologyMarkov(l_params_all = df_PA_input[i_run, ], n_wtp = 20000)
@@ -378,7 +378,7 @@ for(i_run in 1:n_runs){
 ## 4.3 Visualizing the probabilistic analysis results ----
 
 # The 'dampack' package contains multiple useful functions that summarize and visualize the results of a
-# probabilitic analysis. To use those functions, the data has to be in a particular structure.
+# probabilistic analysis. To use those functions, the data has to be in a particular structure.
 l_PA <- make_psa_obj(cost          = df_c, 
                      effectiveness = df_e, 
                      parameters    = df_PA_input, 
@@ -392,12 +392,12 @@ l_PA <- make_psa_obj(cost          = df_c,
                               effect     = df_out_ce_PA$meanEffect,
                               strategies = df_out_ce_PA$Strategy))
 
-# Incremental cost-effectiveness plane
+# Cost-effectiveness plane
 plot(l_PA)
 
 # Cost-effectiveness acceptability curve (CEAC)
 # - note that a vector of willingness to pay values is first generated to define for which values the CEAC is made
-v_wtp <- seq(0, 50000, by = 100)
+v_wtp    <- seq(0, 50000, by = 100)
 CEAC_obj <- ceac(wtp = v_wtp, psa = l_PA)
 
 # Regions of highest probability of cost-effectiveness for each strategy
